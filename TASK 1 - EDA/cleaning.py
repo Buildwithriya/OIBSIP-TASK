@@ -34,3 +34,14 @@ print(df.head())
 
 # descriptive statistics
 print(df[['Age', 'Quantity', 'Price per Unit', 'Total Amount']].describe().round(2))
+
+# count by category
+print(df['Product Category'].value_counts())
+
+print(df.groupby('Product Category')['Total Amount'].sum())
+
+# time series analysis 
+# monthly total revenue
+monthly=df.groupby('Month')['Total Amount'].sum()
+
+print(monthly)
