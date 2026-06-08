@@ -42,6 +42,9 @@ print(df.groupby('Product Category')['Total Amount'].sum())
 
 # time series analysis 
 # monthly total revenue
-monthly=df.groupby('Month')['Total Amount'].sum()
+monthly = df.groupby('Month')['Total Amount'].sum().reset_index()
 
+monthly['Month_str'] = monthly['Month'].astype(str)
+monthly = monthly[monthly['Month_str'] < '2024-01']
 print(monthly)
+
