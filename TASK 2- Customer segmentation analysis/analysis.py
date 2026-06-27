@@ -4,7 +4,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn import decomposition
 
 # reading the dataset
 df=pd.read_csv(r"C:\Users\Riya\OneDrive\Documents\OIBSIP\TASK 2- Customer segmentation analysis\ifood_df.csv")
@@ -89,3 +91,16 @@ plt.show()
 
 
 # k means clustering 
+scaler = StandardScaler()
+data['In_relationship'] = ((data['marital_Married'] == 1) | (data['marital_Together'] == 1)).astype(int)
+cols_for_clustering = ['Income', 'MntTotal', 'In_relationship']
+data_scaled = data.copy()
+data_scaled[cols_for_clustering] = scaler.fit_transform(data[cols_for_clustering])
+print(data_scaled[cols_for_clustering].describe())
+
+
+# pca [prncipal component analysis 
+pca = decomposition.PCA(n_components = 2)
+pca_res = pca.fit_transform(data_scaled[cols_for_clustering])
+data_scaled['pc1'] = pca_res[:,0]
+data_scaled['pc2'] = pca_res[:,1]
