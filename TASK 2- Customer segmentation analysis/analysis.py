@@ -7,6 +7,7 @@ import seaborn as sns
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn import decomposition
+from sklearn.metrics import silhouette_score
 
 # reading the dataset
 df=pd.read_csv(r"C:\Users\Riya\OneDrive\Documents\OIBSIP\TASK 2- Customer segmentation analysis\ifood_df.csv")
@@ -104,3 +105,67 @@ pca = decomposition.PCA(n_components = 2)
 pca_res = pca.fit_transform(data_scaled[cols_for_clustering])
 data_scaled['pc1'] = pca_res[:,0]
 data_scaled['pc2'] = pca_res[:,1]
+
+# elbow method
+X = data_scaled[cols_for_clustering]
+inertia_list = []
+for K in range(2,10):
+    inertia = KMeans(n_clusters=K, random_state=7).fit(X).inertia_
+    inertia_list.append(inertia)
+plt.figure(figsize=[7,5])
+plt.plot(range(2,10), inertia_list, color=(54 / 255, 113 / 255, 130 / 255))
+plt.title("Inertia vs. Number of Clusters")
+plt.xlabel("Number of Clusters (K)")
+plt.ylabel("Inertia")
+plt.show()
+
+# silhouette score
+silhouette_list = []
+for K in range(2,10):
+    model = KMeans(n_clusters = K, random_state=7)
+    clusters = model.fit_predict(X)
+    s_avg = silhouette_score(X, clusters)
+    silhouette_list.append(s_avg)
+
+plt.figure(figsize=[7,5])
+plt.plot(range(2,10), silhouette_list, color=(54 / 255, 113 / 255, 130 / 255))
+plt.title("Silhouette Score vs. Number of Clusters")
+plt.xlabel("Number of Clusters (K)")
+plt.ylabel("Silhouette Score")
+plt.show()
+
+model = KMeans(n_clusters=4, random_state = 7)
+model.fit(data_scaled[cols_for_clustering])
+data_scaled['Cluster'] = model.predict(data_scaled[cols_for_clustering])
+
+
+
+
+# visualization of clusters
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x='pc1', y='pc2', data=data_scaled, hue='Cluster', palette='viridis')
+plt.title('Clustered Data Visualization')
+plt.xlabel('Principal Component 1 (pc1)')
+plt.ylabel('Principal Component 2 (pc2)')
+plt.legend(title='Clusters')
+
+data['Cluster'] = data_scaled.Cluster
+print(data.groupby('Cluster')[cols_for_clustering].mean())
+
+# Mean consumption of different product types by clusters
+
+mnt_data = data.groupby('Cluster')[cols_mnt].mean().reset_index()
+print(mnt_data.head())
+
+
+
+melted_data = pd.melt(mnt_data, id_vars="Cluster", var_name="Product", value_name="Consumption")
+plt.figure(figsize=(12, 6))
+sns.barplot(x="Cluster", y="Consumption", hue="Product", data=melted_data, ci=None, palette="viridis")
+plt.title("Product Consumption by Cluster")
+plt.xlabel("Cluster")
+plt.ylabel("Product Consumption")
+plt.xticks(rotation=0)  
+plt.legend(title="Product", loc="upper right")
+
+plt.show()
