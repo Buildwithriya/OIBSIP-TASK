@@ -35,8 +35,7 @@ print(df['MntTotal'].sum())
 plt.figure(figsize=(6, 4))  
 sns.boxplot(data=df, y='MntTotal')
 plt.title('Box Plot for MntTotal')
-for i in range(0, len(df['MntTotal']), 100):
-    plt.text(i, df['MntTotal'][i], str(df['MntTotal'][i]), fontsize=8, ha='center', va='bottom')
+
 plt.ylabel('MntTotal')
 plt.show()
 
@@ -54,8 +53,7 @@ print(data.describe())
 # box plot histogram for income
 plt.figure(figsize=(6, 4))
 sns.boxplot(data=df,y='Income',color='yellow')
-for i in range(0, len(df['Income']), 100):
-    plt.text(i, df['Income'][i], str(df['Income'][i]), fontsize=8, ha='center', va='bottom')
+
 plt.title('Box Plot for Income')
 plt.ylabel('Income')
 plt.show()
